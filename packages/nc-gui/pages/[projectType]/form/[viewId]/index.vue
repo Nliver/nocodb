@@ -31,11 +31,13 @@ const onClick = () => {
 
 <template>
   <div
-    class="overflow-auto color-transition nc-form-view relative md:bg-primary bg-opacity-10 dark:(bg-slate-900) h-full min-h-[600px] pt-24"
+    class="overflow-y-auto overflow-x-hidden flex flex-wrap color-transition nc-form-view relative md:bg-primary bg-opacity-10 dark:(bg-slate-900) h-full min-h-[600px] pt-12"
   >
     <NuxtPage />
 
-    <GeneralPoweredBy class="mt-12" />
+    <div class="flex w-full items-end mt-12">
+      <GeneralPoweredBy />
+    </div>
 
     <div
       class="flex items-center justify-center cursor-pointer absolute top-15 right-15 rounded-full p-2 bg-white dark:(bg-slate-600) shadow hover:(ring-1 ring-accent ring-opacity-100)"
