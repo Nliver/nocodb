@@ -105,7 +105,9 @@ onKeyStroke(['ArrowRight', 'ArrowUp', 'Enter', 'Space'], goNext)
 
       <h1 class="prose-2xl font-bold self-center my-4">{{ sharedFormView.heading }}</h1>
 
-      <h2 v-if="sharedFormView.subheading" class="prose-lg text-gray-500 self-center">{{ sharedFormView.subheading }}</h2>
+      <h2 class="prose-lg text-slate-500 dark:text-slate-300 self-center mb-4">
+        {{ sharedFormView.subheading }}
+      </h2>
     </template>
 
     <Transition :name="`slide-${transitionName}`" mode="out-in">
