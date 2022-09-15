@@ -4,6 +4,13 @@ import { ActiveCellInj, CellValueInj, ColumnInj, RowInj, provide, toRef, useVirt
 import type { Row } from '~/composables'
 import { NavigateDir } from '~/lib'
 
+interface Props {
+  column: ColumnType
+  modelValue?: any
+  row?: Row
+  active?: boolean
+}
+
 const props = defineProps<Props>()
 
 const emit = defineEmits(['update:modelValue', 'navigate'])
@@ -21,13 +28,6 @@ const Formula = defineAsyncComponent(() => import('../virtual-cell/Formula.vue')
 const Count = defineAsyncComponent(() => import('../virtual-cell/Count.vue'))
 
 const Lookup = defineAsyncComponent(() => import('../virtual-cell/Lookup.vue') as any)
-
-interface Props {
-  column: ColumnType
-  modelValue: any
-  row: Row
-  active?: boolean
-}
 
 const column = toRef(props, 'column')
 const active = toRef(props, 'active', false)
