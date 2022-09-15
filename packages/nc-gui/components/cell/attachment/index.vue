@@ -5,7 +5,6 @@ import { useSortable } from './sort'
 import Modal from './Modal.vue'
 import Carousel from './Carousel.vue'
 import {
-  IsFormInj,
   IsGalleryInj,
   inject,
   isImage,
@@ -24,14 +23,12 @@ interface Props {
 }
 
 interface Emits {
-  (event: 'update:modelValue', value: string | Record<string, any>): void
+  (event: 'update:modelValue', value: string | Record<string, any>[]): void
 }
 
 const { modelValue, rowIndex } = defineProps<Props>()
 
 const emits = defineEmits<Emits>()
-
-const isForm = inject(IsFormInj, ref(false))
 
 const isGallery = inject(IsGalleryInj, ref(false))
 
@@ -39,9 +36,13 @@ const attachmentCellRef = ref<HTMLDivElement>()
 
 const sortableRef = ref<HTMLDivElement>()
 
-const { cellRefs } = useSmartsheetStoreOrThrow()!
+const currentCellRef = ref()
+
+const { cellRefs, isSharedForm } = useSmartsheetStoreOrThrow()!
 
 const {
+  isPublic,
+  isForm,
   column,
   modalVisible,
   attachments,
@@ -54,8 +55,6 @@ const {
   isReadonly,
   storedFiles,
 } = useProvideAttachmentCell(updateModelValue)
-
-const currentCellRef = ref()
 
 watch(
   [() => rowIndex, isForm, attachmentCellRef],
@@ -93,10 +92,20 @@ watch(
   (nextModel) => {
     if (nextModel) {
       try {
-        attachments.value = ((typeof nextModel === 'string' ? JSON.parse(nextModel) : nextModel) || []).filter(Boolean)
+        const nextAttachments = ((typeof nextModel === 'string' ? JSON.parse(nextModel) : nextModel) || []).filter(Boolean)
+
+        if (isPublic.value && isForm.value) {
+          storedFiles.value = nextAttachments
+        } else {
+          attachments.value = nextAttachments
+        }
       } catch (e) {
         console.error(e)
-        attachments.value = []
+        if (isPublic.value && isForm.value) {
+          storedFiles.value = []
+        } else {
+          attachments.value = []
+        }
       }
     }
   },
@@ -104,8 +113,8 @@ watch(
 )
 
 /** updates attachments array for autosave */
-function updateModelValue(data: string | Record<string, any>) {
-  emits('update:modelValue', typeof data !== 'string' ? JSON.stringify(data) : data)
+function updateModelValue(data: string | Record<string, any>[]) {
+  emits('update:modelValue', data)
 }
 
 /** Close modal on escape press, disable dropzone as well */
@@ -121,8 +130,6 @@ watch(
     rowState.value[column.value!.title!] = storedFiles.value
   },
 )
-
-const { isSharedForm } = useSmartsheetStoreOrThrow()
 </script>
 
 <template>
@@ -161,6 +168,7 @@ const { isSharedForm } = useSmartsheetStoreOrThrow()
         </div>
       </a-tooltip>
     </div>
+
     <div v-else class="flex" />
 
     <template v-if="visibleItems.length">
