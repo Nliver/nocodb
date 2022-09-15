@@ -105,15 +105,16 @@ function onCreate(view: ViewType) {
     ref="sidebar"
     :collapsed="sidebarCollapsed"
     collapsiple
-    collapsed-width="50"
-    width="250"
-    class="relative shadow-md h-full"
+    collapsed-width="0"
+    width="0"
+    class="relative shadow h-full w-full !flex-1 !min-w-0 !max-w-[150px] !w-[150px] lg:(!max-w-[250px] !w-[250px])"
     theme="light"
   >
     <Toolbar
       v-if="isOpen"
       class="min-h-[var(--toolbar-height)] max-h-[var(--toolbar-height)] flex items-center py-3 px-3 justify-between border-b-1"
     />
+
     <div v-if="isOpen" class="flex-1 flex flex-col min-h-0">
       <MenuTop @open-modal="openModal" @deleted="loadViews" />
 
