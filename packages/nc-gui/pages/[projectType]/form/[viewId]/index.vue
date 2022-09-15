@@ -31,11 +31,11 @@ const onClick = () => {
 
 <template>
   <div
-    class="color-transition nc-form-view relative md:bg-primary bg-opacity-10 dark:(bg-slate-900) h-full min-h-[600px] flex flex-col justify-center items-center"
+    class="overflow-auto color-transition nc-form-view relative md:bg-primary bg-opacity-10 dark:(bg-slate-900) h-full min-h-[600px] pt-24"
   >
     <NuxtPage />
 
-    <GeneralPoweredBy />
+    <GeneralPoweredBy class="mt-12" />
 
     <div
       class="flex items-center justify-center cursor-pointer absolute top-15 right-15 rounded-full p-2 bg-white dark:(bg-slate-600) shadow hover:(ring-1 ring-accent ring-opacity-100)"
@@ -90,8 +90,18 @@ p {
   .nc-input {
     @apply w-full rounded p-2 min-h-[40px] flex items-center border-solid border-1 border-primary dark:border-slate-200;
 
-    input {
+    input,
+    &.nc-virtual-cell,
+    > div {
       @apply dark:(bg-slate-300 text-slate-900);
+
+      .nc-icon {
+        @apply dark:text-slate-900;
+      }
+
+      .chip {
+        @apply dark:(bg-slate-700 text-white);
+      }
     }
   }
 }
