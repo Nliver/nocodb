@@ -63,7 +63,10 @@ function resetError() {
       <div
         class="bg-white mt-[60px] relative flex flex-col justify-center gap-2 w-full max-w-[500px] mx-auto p-8 md:(rounded-lg border-1 border-gray-200 shadow-xl)"
       >
-        <general-noco-icon class="color-transition hover:(ring ring-accent)" :class="[isLoading ? 'animated-bg-gradient' : '']" />
+        <general-noco-icon
+          class="color-transition hover:(ring ring-accent ring-opacity-100)"
+          :class="[isLoading ? 'animated-bg-gradient' : '']"
+        />
 
         <div class="self-center flex flex-col justify-center items-center text-center gap-2">
           <h1 class="prose-2xl font-bold my-4 w-full">{{ $t('title.resetPassword') }}</h1>
@@ -132,11 +135,11 @@ function resetError() {
     }
 
     &:hover::after {
-      @apply transform scale-110 ring ring-accent;
+      @apply transform scale-110 ring ring-accent ring-opacity-100;
     }
 
     &:active::after {
-      @apply ring ring-accent;
+      @apply ring ring-accent ring-opacity-100;
     }
   }
 }

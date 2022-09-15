@@ -214,11 +214,11 @@ a {
   }
 
   &:hover::after {
-    @apply transform scale-110 ring ring-accent;
+    @apply transform scale-110 ring ring-accent ring-opacity-100;
   }
 
   &:active::after {
-    @apply ring ring-accent;
+    @apply ring ring-accent ring-opacity-100;
   }
 }
 
@@ -255,7 +255,7 @@ a {
 }
 
 .ant-dropdown-menu-item, .ant-menu-item {
-  @apply !py-0 active:(ring ring-accent);
+  @apply !py-0 active:(ring ring-accent ring-opacity-100);
 }
 
 .ant-dropdown-menu-title-content,

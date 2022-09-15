@@ -149,7 +149,7 @@ watch(
         v-model="isOverDropZone"
         inline
         :target="currentCellRef"
-        class="nc-attachment-cell-dropzone text-white text-lg ring ring-accent bg-gray-700/75 flex items-center justify-center gap-2 backdrop-blur-xl"
+        class="nc-attachment-cell-dropzone text-white text-lg ring ring-accent ring-opacity-100 bg-gray-700/75 flex items-center justify-center gap-2 backdrop-blur-xl"
       >
         <MaterialSymbolsFileCopyOutline class="text-accent" /> Drop here
       </general-overlay>

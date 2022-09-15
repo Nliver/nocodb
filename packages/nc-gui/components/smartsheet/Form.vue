@@ -437,7 +437,7 @@ onMounted(async () => {
         <template #item="{ element, index }">
           <a-card
             size="small"
-            class="cursor-pointer item hover:(bg-primary ring-1 ring-accent ring-opacity-100) bg-opacity-10 !rounded !shadow-lg"
+            class="cursor-pointer item hover:(bg-primary ring-1 ring-accent ring-opacity-100 ring-opacity-100) bg-opacity-10 !rounded !shadow-lg"
             @mousedown="moved = false"
             @mousemove="moved = false"
             @mouseup="handleMouseUp(element, index)"
