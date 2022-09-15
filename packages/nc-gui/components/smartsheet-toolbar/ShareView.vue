@@ -10,8 +10,6 @@ import {
   useProject,
   useSmartsheetStoreOrThrow,
 } from '#imports'
-import MdiOpenInNewIcon from '~icons/mdi/open-in-new'
-import MdiCopyIcon from '~icons/mdi/content-copy'
 
 const { t } = useI18n()
 
@@ -47,9 +45,9 @@ const allowCSVDownload = computed({
 })
 
 const genShareLink = async () => {
-  if (!view.value.id) return
+  if (!view.value?.id) return
 
-  shared.value = await $api.dbViewShare.create(view.value?.id)
+  shared.value = await $api.dbViewShare.create(view.value.id)
   shared.value.meta =
     shared.value.meta && typeof shared.value.meta === 'string' ? JSON.parse(shared.value.meta) : shared.value.meta
 
@@ -73,7 +71,7 @@ const sharedViewUrl = computed(() => {
       viewType = 'view'
   }
 
-  return `${dashboardUrl?.value}#/nc/${viewType}/${shared.value.uuid}${surveyMode.value ? '?survey=1' : ''}`
+  return `${dashboardUrl?.value}#/nc/${surveyMode.value ? 'survey' : ''}${viewType}/${shared.value.uuid}`
 })
 
 async function saveAllowCSVDownload() {
@@ -134,7 +132,7 @@ watch(passwordProtected, (value) => {
       class="nc-btn-share-view nc-toolbar-btn"
     >
       <div class="flex items-center gap-1" @click="genShareLink">
-        <MdiOpenInNewIcon />
+        <MdiOpenInNew />
 
         <!-- Share View -->
         <span class="!text-sm font-weight-normal"> {{ $t('activity.shareView') }}</span>
@@ -154,10 +152,10 @@ watch(passwordProtected, (value) => {
         <div class="flex-1 h-min text-xs">{{ sharedViewUrl }}</div>
 
         <a v-e="['c:view:share:open-url']" :href="sharedViewUrl" target="_blank">
-          <MdiOpenInNewIcon class="text-sm text-gray-500 mt-2" />
+          <MdiOpenInNew class="text-sm text-gray-500 mt-2" />
         </a>
 
-        <MdiCopyIcon v-e="['c:view:share:copy-url']" class="text-gray-500 text-sm cursor-pointer" @click="copyLink" />
+        <MdiContentCopy v-e="['c:view:share:copy-url']" class="text-gray-500 text-sm cursor-pointer" @click="copyLink" />
       </div>
 
       <a-collapse ghost>
