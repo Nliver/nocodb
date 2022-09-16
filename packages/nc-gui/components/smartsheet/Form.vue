@@ -691,9 +691,9 @@ onMounted(async () => {
             </Draggable>
 
             <div class="justify-center flex mt-6">
-              <a-button type="primary" class="flex items-center gap-2 nc-form-submit" size="large" @click="submitForm">
+              <button type="submit" class="scaling-btn nc-form-submit" @click="submitForm">
                 {{ $t('general.submit') }}
-              </a-button>
+              </button>
             </div>
           </a-card>
         </a-form>
