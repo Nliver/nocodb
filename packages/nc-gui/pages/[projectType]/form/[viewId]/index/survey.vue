@@ -35,7 +35,7 @@ const steps = computed(() => {
   }, [] as string[])
 })
 
-const { index, goToPrevious, goToNext, isFirst, isLast, steps: _steps } = useStepper(steps)
+const { index, goToPrevious, goToNext, isFirst, isLast } = useStepper(steps)
 
 const isTransitioning = ref(false)
 
