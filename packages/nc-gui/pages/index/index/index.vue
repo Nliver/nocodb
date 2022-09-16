@@ -202,14 +202,13 @@ const customRow = (record: ProjectType) => ({
       </a-dropdown>
     </div>
 
-    <TransitionGroup name="layout" mode="out-in">
-      <div v-if="isLoading" key="skeleton">
+    <Transition name="layout" mode="out-in">
+      <div v-if="isLoading">
         <a-skeleton />
       </div>
 
       <a-table
         v-else
-        key="table"
         :custom-row="customRow"
         :data-source="filteredProjects"
         :pagination="{ position: ['bottomCenter'] }"
@@ -280,7 +279,7 @@ const customRow = (record: ProjectType) => ({
           </template>
         </a-table-column>
       </a-table>
-    </TransitionGroup>
+    </Transition>
   </div>
 </template>
 
