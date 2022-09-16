@@ -404,8 +404,7 @@ onMounted(async () => {
           <button
             v-if="hiddenColumns.length"
             type="button"
-            class="nc-form-add-all color-transition hover:text-primary"
-            style="border-bottom: 2px solid rgb(218, 218, 218)"
+            class="nc-form-add-all color-transition bg-white transform hover:(text-primary bg-primary bg-opacity-5 ring ring-accent ring-opacity-100) active:translate-y-[1px] px-2 py-1 border-b-2 border-slate-300 shadow-sm rounded"
             @click="addAllColumns"
           >
             <!-- Add all -->
@@ -415,8 +414,7 @@ onMounted(async () => {
           <button
             v-if="localColumns.length"
             type="button"
-            class="nc-form-remove-all color-transition hover:text-primary"
-            style="border-bottom: 2px solid rgb(218, 218, 218)"
+            class="nc-form-remove-all color-transition bg-white transform hover:(text-primary bg-primary bg-opacity-5 ring ring-accent ring-opacity-100) active:translate-y-[1px] px-2 py-1 border-b-2 border-slate-300 shadow-sm rounded"
             @click="removeAllColumns"
           >
             <!-- Remove all -->

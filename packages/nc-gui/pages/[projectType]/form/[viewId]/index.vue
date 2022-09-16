@@ -95,7 +95,7 @@ p {
     input,
     &.nc-virtual-cell,
     > div {
-      @apply dark:(bg-slate-300 text-slate-900);
+      @apply dark:(bg-slate-400 text-slate-900);
 
       .nc-icon {
         @apply dark:text-slate-900;
@@ -109,7 +109,7 @@ p {
 }
 
 .nc-cell {
-  @apply dark:bg-slate-300;
+  @apply dark:bg-slate-400;
 
   .nc-attachment-cell > div {
     @apply dark:(bg-slate-100);
