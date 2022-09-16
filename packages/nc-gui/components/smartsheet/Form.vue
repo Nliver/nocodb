@@ -510,7 +510,7 @@ onMounted(async () => {
         }"
       >
         <a-form ref="formRef" :model="formState" class="nc-form" no-style>
-          <a-card class="!rounded !shadow !m-2 md:!m-4 xl:!m-8 py-8" :body-style="{ paddingLeft: '0px', paddingRight: '0px' }">
+          <a-card class="!rounded !shadow !m-2 md:!m-4 xl:!m-8" :body-style="{ paddingLeft: '0px', paddingRight: '0px' }">
             <!-- Header -->
             <div v-if="isEditable" class="px-4">
               <a-form-item v-if="isEditable">
