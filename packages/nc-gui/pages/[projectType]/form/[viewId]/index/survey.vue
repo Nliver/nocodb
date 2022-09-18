@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ColumnType, LinkToAnotherRecordType } from 'nocodb-sdk'
 import { RelationTypes, UITypes, isVirtualCol } from 'nocodb-sdk'
 import { SwipeDirection } from '@vueuse/core'
 import {
@@ -7,16 +8,22 @@ import {
   onKeyStroke,
   provide,
   ref,
+  useEventListener,
   usePointerSwipe,
   useSharedFormStoreOrThrow,
   useStepper,
 } from '#imports'
 
+enum TransitionDirection {
+  Left = 'left',
+  Right = 'right',
+}
+
 const { v$, formState, formColumns, submitForm, submitted, secondsRemain, sharedFormView } = useSharedFormStoreOrThrow()
 
 const isTransitioning = ref(false)
 
-const transitionName = ref<'left' | 'right'>('left')
+const transitionName = ref<TransitionDirection>(TransitionDirection.Left)
 
 const el = ref<HTMLDivElement>()
 
@@ -36,36 +43,44 @@ provide(DropZoneRef, el)
 
 const steps = computed(() => {
   if (!formColumns.value) return []
-  return formColumns.value.reduce((acc, column) => {
-    acc.push((column as any).label || column.title)
+
+  return formColumns.value.reduce<string[]>((acc, column) => {
+    const title = column.label || column.title
+
+    if (!title) return acc
+
+    acc.push(title)
 
     return acc
-  }, [] as string[])
+  }, [])
 })
 
 const { index, goToPrevious, goToNext, isFirst, isLast } = useStepper(steps)
 
 const field = computed(() => formColumns.value?.[index.value])
 
-function isRequired(_columnObj: Record<string, any>, required = false) {
-  let columnObj = _columnObj
+function isRequired(column: ColumnType, required = false) {
+  let columnObj = column
   if (
     columnObj.uidt === UITypes.LinkToAnotherRecord &&
     columnObj.colOptions &&
-    columnObj.colOptions.type === RelationTypes.BELONGS_TO
+    (columnObj.colOptions as { type: RelationTypes }).type === RelationTypes.BELONGS_TO
   ) {
-    columnObj = formColumns.value?.find((c) => c.id === columnObj.colOptions.fk_child_column_id) as Record<string, any>
+    columnObj = formColumns.value?.find(
+      (c) => c.id === (columnObj.colOptions as LinkToAnotherRecordType).fk_child_column_id,
+    ) as ColumnType
   }
 
-  return !!(required || (columnObj && columnObj.rqd && !columnObj.cdf))
+  return required || (columnObj && columnObj.rqd && !columnObj.cdf)
 }
 
-function transition(direction: 'left' | 'right') {
+function transition(direction: TransitionDirection) {
   isTransitioning.value = true
   transitionName.value = direction
 
   setTimeout(() => {
-    transitionName.value = transitionName.value === 'left' ? 'right' : 'left'
+    transitionName.value =
+      transitionName.value === TransitionDirection.Left ? TransitionDirection.Right : TransitionDirection.Left
   }, 500)
 
   setTimeout(() => {
@@ -85,7 +100,7 @@ async function goNext() {
     if (!isValid) return
   }
 
-  transition('left')
+  transition(TransitionDirection.Left)
 
   goToNext()
 }
@@ -93,7 +108,7 @@ async function goNext() {
 async function goPrevious() {
   if (isFirst.value) return
 
-  transition('right')
+  transition(TransitionDirection.Right)
 
   goToPrevious()
 }
