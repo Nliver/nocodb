@@ -25,7 +25,7 @@ import {
   watch,
 } from '#imports'
 
-const { getMeta } = useMetas()
+const { getMeta, metas } = useMetas()
 
 const { tables } = useProject()
 
@@ -33,23 +33,16 @@ const route = useRoute()
 
 const loading = ref(true)
 
+const activeView = ref()
+
+const fields = ref<ColumnType[]>([])
+
 const activeTab = inject(
   TabMetaInj,
   computed(() => ({} as TabItem)),
 )
 
-/** wait until table list loads since meta load requires table list **/
-until(tables)
-  .toMatch((tables) => tables.length > 0)
-  .then(() => {
-    getMeta(route.params.title as string, true).finally(() => (loading.value = false))
-  })
-
-const { metas } = useMetas()
-
-const activeView = ref()
-
-const fields = ref<ColumnType[]>([])
+const treeViewIsLockedInj = inject('TreeViewIsLockedInj', ref(false))
 
 const meta = computed<TableType | undefined>(() => metas.value[activeTab.value.id!])
 
@@ -73,12 +66,15 @@ provide(ReloadViewMetaHookInj, reloadViewMetaEventHook)
 provide(OpenNewRecordFormHookInj, openNewRecordFormHook)
 provide(FieldsInj, fields)
 provide(IsFormInj, isForm)
-provide(TabMetaInj, activeTab)
 
-const treeViewIsLockedInj = inject('TreeViewIsLockedInj', ref(false))
+/** wait until table list loads since meta load requires table list **/
+until(tables)
+  .toMatch((tables) => tables.length > 0)
+  .then(() => {
+    getMeta(route.params.title as string, true).finally(() => (loading.value = false))
+  })
 
 watch(isLocked, (nextValue) => (treeViewIsLockedInj.value = nextValue), { immediate: true })
-console.log('smartsheet')
 </script>
 
 <template>
