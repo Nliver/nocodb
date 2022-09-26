@@ -14,12 +14,15 @@ import {
   OpenNewRecordFormHookInj,
   PaginationDataInj,
   ReadonlyInj,
+  ReloadRowDataHookInj,
   ReloadViewDataHookInj,
+  computed,
   createEventHook,
   enumColor,
   extractPkFromRow,
   inject,
   message,
+  onBeforeMount,
   onClickOutside,
   onMounted,
   provide,
@@ -122,6 +125,9 @@ provide(ReadonlyInj, !hasEditPermission)
 const disableUrlOverlay = ref(false)
 provide(CellUrlDisableOverlayInj, disableUrlOverlay)
 
+// reload table data reload hook as fallback to rowdatareload
+provide(ReloadRowDataHookInj, reloadViewDataHook)
+
 const showLoading = ref(true)
 
 reloadViewDataHook?.on(async (shouldShowLoading) => {
@@ -162,16 +168,6 @@ const selectCell = (row: number, col: number) => {
   selected.row = row
   selected.col = col
 }
-
-watch(
-  () => view.value?.id,
-  async (next, old) => {
-    if (next && old && next !== old) {
-      await loadData()
-    }
-  },
-  { immediate: true },
-)
 
 const onresize = (colID: string, event: any) => {
   updateWidth(colID, event.detail)
@@ -410,10 +406,6 @@ const expandedFormOnRowIdDlg = computed({
   },
 })
 
-// reload table data reload hook as fallback to rowdatareload
-provide(ReloadRowDataHookInj, reloadViewDataHook)
-
-// trigger initial data load in grid
 reloadViewDataHook.trigger()
 </script>
 

@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 import type { ViewType, ViewTypes } from 'nocodb-sdk'
 import type { SortableEvent } from 'sortablejs'
-import type { Menu as AntMenu } from 'ant-design-vue'
-import type { Ref } from 'vue'
 import Sortable from 'sortablejs'
+import type { Menu as AntMenu } from 'ant-design-vue'
 import {
   ActiveViewInj,
-  ViewListInj,
   extractSdkResponseErrorMsg,
   inject,
   message,
   onMounted,
   ref,
   resolveComponent,
+  toRef,
   useApi,
   useDialog,
   useI18n,
@@ -23,9 +22,9 @@ import {
   watch,
 } from '#imports'
 
-const emits = defineEmits<Emits>()
-
-const { t } = useI18n()
+interface Props {
+  views: ViewType[]
+}
 
 interface Emits {
   (event: 'openModal', data: { type: ViewTypes; title?: string; copyViewId?: string }): void
@@ -33,11 +32,17 @@ interface Emits {
   (event: 'deleted'): void
 }
 
+const props = defineProps<Props>()
+
+const emits = defineEmits<Emits>()
+
+const { t } = useI18n()
+
 const { $e } = useNuxtApp()
 
 const activeView = inject(ActiveViewInj, ref())
 
-const views = inject<Ref<ViewType[]>>(ViewListInj, ref([]))
+const views = toRef(props, 'views')
 
 const { api } = useApi()
 
@@ -217,7 +222,7 @@ function openDeleteDialog(view: Record<string, any>) {
 </script>
 
 <template>
-  <a-menu ref="menuRef" :class="{ dragging }" class="nc-views-menu flex-1" :selected-keys="selected">
+  <a-menu :key="views.length" ref="menuRef" :class="{ dragging }" class="nc-views-menu flex-1" :selected-keys="selected">
     <LazySmartsheetSidebarRenameableMenuItem
       v-for="(view, index) of views"
       :id="view.id"

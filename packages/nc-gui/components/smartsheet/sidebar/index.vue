@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import type { ViewType, ViewTypes } from 'nocodb-sdk'
+import type { TableType, ViewType, ViewTypes } from 'nocodb-sdk'
 import {
-  ActiveViewInj,
-  MetaInj,
   ViewListInj,
   computed,
-  inject,
   provide,
   ref,
+  toRef,
   useNuxtApp,
   useRoute,
   useRouter,
   useSidebar,
   useUIPermission,
+  useVModel,
   useViews,
   watch,
 } from '#imports'
 
-const meta = inject(MetaInj, ref())
+interface Props {
+  meta: TableType
+  activeView: ViewType
+}
 
-const activeView = inject(ActiveViewInj, ref())
+const props = defineProps<Props>()
+
+const emit = defineEmits(['update:activeView'])
+
+const meta = toRef(props, 'meta')
+
+const activeView = useVModel(props, 'activeView', emit)
 
 const { views, loadViews } = useViews(meta)
 
@@ -54,32 +62,28 @@ let selectedViewId = $ref('')
 let modalOpen = $ref(false)
 
 /** Watch route param and change active view based on `viewTitle` */
-watch(
-  [views, () => route.params.viewTitle],
-  ([nextViews, viewTitle]) => {
-    if (viewTitle) {
-      let view = nextViews.find((v) => v.title === viewTitle)
+watch([views, () => route.params.title], ([nextViews, viewTitle]) => {
+  if (viewTitle) {
+    let view = nextViews.find((v) => v.title === viewTitle)
+    if (view) {
+      activeView.value = view
+    } else {
+      /** search with view id and if found replace with title */
+      view = nextViews.find((v) => v.id === viewTitle)
       if (view) {
-        activeView.value = view
-      } else {
-        /** search with view id and if found replace with title */
-        view = nextViews.find((v) => v.id === viewTitle)
-        if (view) {
-          router.replace({
-            params: {
-              viewTitle: view.title,
-            },
-          })
-        }
+        router.replace({
+          params: {
+            viewTitle: view.title,
+          },
+        })
       }
     }
-    /** if active view is not found, set it to first view */
-    if (!activeView.value && nextViews.length) {
-      activeView.value = nextViews[0]
-    }
-  },
-  { immediate: true },
-)
+  }
+  /** if active view is not found, set it to first view */
+  if (!activeView.value && nextViews.length) {
+    activeView.value = nextViews[0]
+  }
+})
 
 /** Open view creation modal */
 function openModal({ type, title = '', copyViewId }: { type: ViewTypes; title: string; copyViewId: string }) {
@@ -113,7 +117,7 @@ function onCreate(view: ViewType) {
       class="min-h-[var(--toolbar-height)] max-h-[var(--toolbar-height)] flex items-center py-3 px-3 justify-between border-b-1"
     />
     <div v-if="isOpen" class="flex-1 flex flex-col min-h-0">
-      <LazySmartsheetSidebarMenuTop @open-modal="openModal" @deleted="loadViews" />
+      <LazySmartsheetSidebarMenuTop :views="views" @open-modal="openModal" @deleted="loadViews" />
 
       <div v-if="isUIAllowed('virtualViewsCreateOrEdit')" class="!my-3 w-full border-b-1" />
 

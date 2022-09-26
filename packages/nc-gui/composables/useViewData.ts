@@ -171,7 +171,8 @@ export function useViewData(
   }
 
   async function loadData(params: Parameters<Api<any>['dbViewRow']['list']>[4] = {}) {
-    if ((!project?.value?.id || !meta.value?.id || !viewMeta.value?.id) && !isPublic.value) return
+    if ((!project.value?.id || !meta.value?.id || !viewMeta.value?.id) && !isPublic.value) return
+
     const response = !isPublic.value
       ? await api.dbViewRow.list('noco', project.value.id!, meta.value!.id!, viewMeta.value!.id!, {
           ...queryParams.value,

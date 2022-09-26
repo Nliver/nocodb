@@ -23,6 +23,15 @@ export default defineNuxtConfig({
       mode: 'out-in',
     },
 
+    keepalive: false,
+
+    head: {
+      noscript: [
+        // <noscript>Javascript is required</noscript>
+        { children: 'Javascript is required' },
+      ],
+    },
+
     /** In production build we need to load assets using relative path, to achieve the result we are using cdnURL */
     cdnURL: process.env.NODE_ENV === 'production' ? '.' : undefined,
   },
