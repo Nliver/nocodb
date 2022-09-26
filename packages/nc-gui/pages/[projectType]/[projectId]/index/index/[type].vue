@@ -5,17 +5,20 @@ import {
   FieldsInj,
   IsFormInj,
   IsLockedInj,
+  IsPublicInj,
   MetaInj,
   OpenNewRecordFormHookInj,
   ReloadViewDataHookInj,
   ReloadViewMetaHookInj,
   createEventHook,
+  inject,
   provide,
   ref,
   useMetas,
   useProject,
   useProvideSmartsheetStore,
   useSidebar,
+  useViews,
   watch,
 } from '#imports'
 
@@ -23,7 +26,7 @@ const { meta } = useMetas()
 
 const { isLocked: isProjectLocked } = useProject()
 
-const activeView = ref()
+const { activeView } = useViews(meta)
 
 const fields = ref<ColumnType[]>([])
 
@@ -48,6 +51,8 @@ provide(OpenNewRecordFormHookInj, openNewRecordFormHook)
 provide(FieldsInj, fields)
 provide(IsFormInj, isForm)
 
+const isPublic = inject(IsPublicInj, ref(false))
+
 watch(isLocked, (nextValue) => (isProjectLocked.value = nextValue), { immediate: true })
 </script>
 
@@ -55,12 +60,12 @@ watch(isLocked, (nextValue) => (isProjectLocked.value = nextValue), { immediate:
   <div class="w-full h-full">
     <div class="nc-container flex h-full">
       <div class="flex flex-col h-full flex-1 min-w-0">
-        <LazySmartsheetToolbar />
+        <LazySmartsheetToolbar :is-gallery="isGallery" :is-form="isForm" :is-grid="isGrid" :is-public="isPublic" />
 
         <NuxtPage :is-gallery="isGallery" :is-form="isForm" :is-grid="isGrid" />
       </div>
 
-      <LazySmartsheetSidebar v-model:active-view="activeView" :meta="meta" class="nc-right-sidebar" />
+      <LazySmartsheetSidebar :meta="meta" class="nc-right-sidebar" />
     </div>
   </div>
 </template>

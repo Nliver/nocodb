@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import HTTPSnippet from 'httpsnippet'
 import {
-  ActiveViewInj,
-  MetaInj,
-  inject,
   message,
-  ref,
   useCopy,
   useGlobal,
   useI18n,
+  useMetas,
   useProject,
   useSmartsheetStoreOrThrow,
   useVModel,
   useViewData,
+  useViews,
   watch,
 } from '#imports'
 
@@ -28,13 +26,13 @@ const { project } = $(useProject())
 
 const { appInfo, token } = $(useGlobal())
 
-const meta = $(inject(MetaInj, ref()))
+const { meta } = useMetas()
 
-const view = $(inject(ActiveViewInj, ref()))
+const { activeView: view } = useViews()
 
 const { xWhere } = useSmartsheetStoreOrThrow()
 
-const { queryParams } = $(useViewData($$(meta), $$(view), xWhere))
+const { queryParams } = $(useViewData(meta, view, xWhere))
 
 const { copy } = useCopy()
 
@@ -81,7 +79,10 @@ const selectedLangName = $ref(langs[0].name)
 
 const apiUrl = $computed(
   () =>
-    new URL(`/api/v1/db/data/noco/${project.id}/${meta?.title}/views/${view?.title}`, (appInfo && appInfo.ncSiteUrl) || '/').href,
+    new URL(
+      `/api/v1/db/data/noco/${project.id}/${meta.value?.title}/views/${view.value?.title}`,
+      (appInfo && appInfo.ncSiteUrl) || '/',
+    ).href,
 )
 
 const snippet = $computed(
@@ -114,8 +115,8 @@ const api = new Api({
 api.dbViewRow.list(
   "noco",
   ${JSON.stringify(project.title)},
-  ${JSON.stringify(meta?.title)},
-  ${JSON.stringify(view?.title)}, ${JSON.stringify(queryParams, null, 4)}).then(function (data) {
+  ${JSON.stringify(meta.value?.title)},
+  ${JSON.stringify(view.value?.title)}, ${JSON.stringify(queryParams, null, 4)}).then(function (data) {
   console.log(data);
 }).catch(function (error) {
   console.error(error);

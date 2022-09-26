@@ -3,7 +3,6 @@ import type { ColumnType } from 'nocodb-sdk'
 import { UITypes, isVirtualCol } from 'nocodb-sdk'
 import type { EventHook } from '@vueuse/core'
 import {
-  ActiveViewInj,
   CellUrlDisableOverlayInj,
   ChangePageInj,
   FieldsInj,
@@ -32,10 +31,12 @@ import {
   useGridViewColumnWidth,
   useI18n,
   useMetas,
+  useProject,
   useRoute,
   useSmartsheetStoreOrThrow,
   useUIPermission,
   useViewData,
+  useViews,
   watch,
 } from '#imports'
 import type { Row } from '~/lib'
@@ -45,7 +46,7 @@ const { t } = useI18n()
 
 const { meta } = useMetas()
 
-const view = inject(ActiveViewInj, ref())
+const { activeView: view } = useViews()
 
 // keep a root fields variable and will get modified from
 // fields menu and get used in grid and gallery

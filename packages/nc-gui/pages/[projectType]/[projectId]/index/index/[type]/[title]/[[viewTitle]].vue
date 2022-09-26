@@ -20,11 +20,10 @@ const isLoading = ref(true)
 watch(
   [meta, tables],
   async () => {
-    if (!meta.value && tables.value.length) {
-      isLoading.value = true
-      await getMeta(route.params.title as string)
-      isLoading.value = false
-    }
+    isLoading.value = true
+    console.log('fetching meta')
+    await getMeta(route.params.title as string)
+    isLoading.value = false
   },
   { immediate: true, flush: 'post' },
 )

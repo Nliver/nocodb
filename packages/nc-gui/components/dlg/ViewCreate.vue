@@ -5,18 +5,17 @@ import { capitalize } from '@vue/runtime-core'
 import type { FormType, GalleryType, GridType, KanbanType } from 'nocodb-sdk'
 import { ViewTypes } from 'nocodb-sdk'
 import {
-  MetaInj,
-  ViewListInj,
   computed,
   generateUniqueTitle,
-  inject,
   message,
   nextTick,
   reactive,
   unref,
   useApi,
   useI18n,
+  useMetas,
   useVModel,
+  useViews,
   watch,
 } from '#imports'
 
@@ -52,9 +51,9 @@ const { t } = useI18n()
 
 const { isLoading: loading, api } = useApi()
 
-const meta = inject(MetaInj, ref())
+const { meta } = useMetas()
 
-const viewList = inject(ViewListInj)
+const { views: viewList } = useViews()
 
 const form = reactive<Form>({
   title: props.title || '',

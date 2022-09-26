@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { IsPublicInj, inject, ref, useSharedView, useSidebar, useSmartsheetStoreOrThrow, useUIPermission } from '#imports'
+import { useSharedView, useSidebar, useUIPermission } from '#imports'
 
-const { isGrid, isForm, isGallery, isSqlView } = useSmartsheetStoreOrThrow()
+interface Props {
+  isPublic: boolean
+  isGrid: boolean
+  isGallery: boolean
+  isForm: boolean
+}
 
-const isPublic = inject(IsPublicInj, ref(false))
+defineProps<Props>()
 
 const { isUIAllowed } = useUIPermission()
 

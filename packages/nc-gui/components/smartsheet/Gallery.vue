@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { isVirtualCol } from 'nocodb-sdk'
 import {
-  ActiveViewInj,
   ChangePageInj,
   FieldsInj,
   IsFormInj,
   IsGalleryInj,
   IsGridInj,
-  MetaInj,
   OpenNewRecordFormHookInj,
   PaginationDataInj,
   ReadonlyInj,
@@ -21,8 +19,10 @@ import {
   onMounted,
   provide,
   ref,
+  useMetas,
   useUIPermission,
   useViewData,
+  useViews,
 } from '#imports'
 import type { Row as RowType } from '~/lib'
 
@@ -30,8 +30,10 @@ interface Attachment {
   url: string
 }
 
-const meta = inject(MetaInj, ref())
-const view = inject(ActiveViewInj, ref())
+const { meta } = useMetas()
+
+const { activeView: view } = useViews()
+
 const reloadViewMetaHook = inject(ReloadViewMetaHookInj)
 const reloadViewDataHook = inject(ReloadViewDataHookInj)
 const openNewRecordFormHook = inject(OpenNewRecordFormHookInj, createEventHook())

@@ -1,33 +1,8 @@
 <script setup lang="ts">
-import type { TableType, ViewType, ViewTypes } from 'nocodb-sdk'
-import {
-  ViewListInj,
-  computed,
-  provide,
-  ref,
-  toRef,
-  useNuxtApp,
-  useRoute,
-  useRouter,
-  useSidebar,
-  useUIPermission,
-  useVModel,
-  useViews,
-  watch,
-} from '#imports'
+import type { ViewType, ViewTypes } from 'nocodb-sdk'
+import { computed, ref, useMetas, useNuxtApp, useRouter, useSidebar, useUIPermission, useViews } from '#imports'
 
-interface Props {
-  meta: TableType
-  activeView: ViewType
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits(['update:activeView'])
-
-const meta = toRef(props, 'meta')
-
-const activeView = useVModel(props, 'activeView', emit)
+const { meta } = useMetas()
 
 const { views, loadViews } = useViews(meta)
 
@@ -35,11 +10,7 @@ const { isUIAllowed } = useUIPermission()
 
 const router = useRouter()
 
-const route = useRoute()
-
 const { $e } = useNuxtApp()
-
-provide(ViewListInj, views)
 
 /** Sidebar visible */
 const { isOpen } = useSidebar('nc-right-sidebar', { isOpen: true })
@@ -60,30 +31,6 @@ let selectedViewId = $ref('')
 
 /** is view creation modal open */
 let modalOpen = $ref(false)
-
-/** Watch route param and change active view based on `viewTitle` */
-watch([views, () => route.params.title], ([nextViews, viewTitle]) => {
-  if (viewTitle) {
-    let view = nextViews.find((v) => v.title === viewTitle)
-    if (view) {
-      activeView.value = view
-    } else {
-      /** search with view id and if found replace with title */
-      view = nextViews.find((v) => v.id === viewTitle)
-      if (view) {
-        router.replace({
-          params: {
-            viewTitle: view.title,
-          },
-        })
-      }
-    }
-  }
-  /** if active view is not found, set it to first view */
-  if (!activeView.value && nextViews.length) {
-    activeView.value = nextViews[0]
-  }
-})
 
 /** Open view creation modal */
 function openModal({ type, title = '', copyViewId }: { type: ViewTypes; title: string; copyViewId: string }) {
