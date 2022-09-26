@@ -37,6 +37,7 @@ const position = ref({
 const divMove = (e: MouseEvent) => {
   position.value = { y: `${e.clientY - 10}px`, x: `${e.clientX - 18}px` }
 }
+
 const mouseUp = () => {
   window.removeEventListener('mousemove', divMove, true)
 }
