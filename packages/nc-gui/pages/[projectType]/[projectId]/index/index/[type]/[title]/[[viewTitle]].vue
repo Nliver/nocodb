@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useMetas, useProject, useRoute, watch } from '#imports'
+import { ref, useMetas, useProject, useRoute, useViews, watch } from '#imports'
 
 interface Props {
   isGallery?: boolean
@@ -13,6 +13,8 @@ const route = useRoute()
 
 const { meta, getMeta } = useMetas()
 
+const { setActiveView, loadViews } = useViews()
+
 const { tables } = useProject()
 
 const isLoading = ref(true)
@@ -20,10 +22,14 @@ const isLoading = ref(true)
 watch(
   [meta, tables],
   async () => {
-    isLoading.value = true
-    console.log('fetching meta')
-    await getMeta(route.params.title as string)
-    isLoading.value = false
+    if (!meta.value && tables.value.length) {
+      isLoading.value = true
+      console.log('fetching meta')
+      await getMeta(route.params.title as string)
+      await loadViews()
+      await setActiveView(route.params.title as string)
+      isLoading.value = false
+    }
   },
   { immediate: true, flush: 'post' },
 )

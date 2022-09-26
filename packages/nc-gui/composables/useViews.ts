@@ -1,9 +1,22 @@
-import type { TableType, ViewType } from 'nocodb-sdk'
-import type { MaybeRef } from '@vueuse/core'
-import { ActiveViewInj, inject, provide, ref, unref, useApi, useInjectionState, useRoute, useRouter, watch } from '#imports'
+import type { ViewType } from 'nocodb-sdk'
+import {
+  ActiveViewInj,
+  inject,
+  provide,
+  ref,
+  unref,
+  useApi,
+  useInjectionState,
+  useMetas,
+  useRoute,
+  useRouter,
+  watch,
+} from '#imports'
 
-const [setup, use] = useInjectionState((meta: MaybeRef<TableType | undefined>) => {
+const [setup, use] = useInjectionState(() => {
   let views = $ref<ViewType[]>([])
+
+  const { meta } = useMetas()
 
   const { api, isLoading } = useApi({ useGlobalInstance: true })
 
@@ -26,48 +39,49 @@ const [setup, use] = useInjectionState((meta: MaybeRef<TableType | undefined>) =
     }
   }
 
-  watch(() => unref(meta), loadViews, { immediate: true })
-
-  /** Watch route param and change active view based on `viewTitle` */
-  watch(
-    [$$(views), () => route.params.title],
-    ([nextViews, viewTitle]) => {
-      console.log(viewTitle)
-      if (viewTitle) {
-        let view = nextViews.find((v) => v.title === viewTitle)
+  const setActiveView = (viewTitle?: string) => {
+    if (viewTitle) {
+      let view = views.find((v) => v.title === viewTitle)
+      if (view) {
+        activeView.value = view
+      } else {
+        /** search with view id and if found replace with title */
+        view = views.find((v) => v.id === viewTitle)
         if (view) {
-          activeView.value = view
-        } else {
-          /** search with view id and if found replace with title */
-          view = nextViews.find((v) => v.id === viewTitle)
-          if (view) {
-            router.replace({
-              params: {
-                viewTitle: view.title,
-              },
-            })
-          }
+          return router.replace({
+            params: {
+              viewTitle: view.title,
+            },
+          })
         }
       }
+    }
 
-      /** if active view is not found, set it to first view */
-      if (!activeView.value && nextViews.length) {
-        activeView.value = nextViews[0]
-      }
+    /** if active view is not found, set it to first view */
+    if (!activeView.value && views.length) {
+      activeView.value = views[0]
+    }
+
+    return Promise.resolve(true)
+  }
+
+  watch(
+    () => unref(meta),
+    async () => {
+      await loadViews()
+      await setActiveView(route.params.title as string)
     },
-    { flush: 'pre', immediate: true },
+    { immediate: true },
   )
 
-  return { views: $$(views), loadViews, isLoading, activeView }
+  return { views: $$(views), loadViews, setActiveView, isLoading, activeView }
 }, 'useViews')
 
-export function useViews(meta?: MaybeRef<TableType | undefined>) {
+export function useViews() {
   const state = use()
 
   if (!state) {
-    if (!meta) throw new Error('Meta was not provided and injection state is not initialized!')
-
-    return setup(meta)
+    return setup()
   }
 
   return state

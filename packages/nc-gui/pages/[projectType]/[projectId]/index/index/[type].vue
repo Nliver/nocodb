@@ -26,7 +26,7 @@ const { meta } = useMetas()
 
 const { isLocked: isProjectLocked } = useProject()
 
-const { activeView } = useViews(meta)
+const { activeView } = useViews()
 
 const fields = ref<ColumnType[]>([])
 

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { ViewType, ViewTypes } from 'nocodb-sdk'
-import { computed, ref, useMetas, useNuxtApp, useRouter, useSidebar, useUIPermission, useViews } from '#imports'
+import { computed, ref, useNuxtApp, useRouter, useSidebar, useUIPermission, useViews } from '#imports'
 
-const { meta } = useMetas()
-
-const { views, loadViews } = useViews(meta)
+const { views, loadViews } = useViews()
 
 const { isUIAllowed } = useUIPermission()
 

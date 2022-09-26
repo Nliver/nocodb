@@ -31,7 +31,6 @@ import {
   useGridViewColumnWidth,
   useI18n,
   useMetas,
-  useProject,
   useRoute,
   useSmartsheetStoreOrThrow,
   useUIPermission,
@@ -410,6 +409,8 @@ const expandedFormOnRowIdDlg = computed({
 })
 
 reloadViewDataHook.trigger()
+
+console.log('trigger')
 </script>
 
 <template>
