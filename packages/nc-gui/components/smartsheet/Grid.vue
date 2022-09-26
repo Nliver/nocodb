@@ -11,7 +11,6 @@ import {
   IsGalleryInj,
   IsGridInj,
   IsLockedInj,
-  MetaInj,
   OpenNewRecordFormHookInj,
   PaginationDataInj,
   ReadonlyInj,
@@ -32,6 +31,7 @@ import {
   useEventListener,
   useGridViewColumnWidth,
   useI18n,
+  useMetas,
   useRoute,
   useSmartsheetStoreOrThrow,
   useUIPermission,
@@ -43,7 +43,7 @@ import { NavigateDir } from '~/lib'
 
 const { t } = useI18n()
 
-const meta = inject(MetaInj, ref())
+const { meta } = useMetas()
 
 const view = inject(ActiveViewInj, ref())
 

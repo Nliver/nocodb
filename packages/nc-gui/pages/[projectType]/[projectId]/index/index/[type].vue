@@ -12,22 +12,16 @@ import {
   createEventHook,
   provide,
   ref,
-  until,
   useMetas,
   useProject,
   useProvideSmartsheetStore,
-  useRoute,
   useSidebar,
   watch,
 } from '#imports'
 
-const { getMeta, meta } = useMetas()
+const { meta } = useMetas()
 
-const { tables, isLocked: isProjectLocked } = useProject()
-
-const route = useRoute()
-
-const loading = ref(true)
+const { isLocked: isProjectLocked } = useProject()
 
 const activeView = ref()
 
@@ -54,26 +48,12 @@ provide(OpenNewRecordFormHookInj, openNewRecordFormHook)
 provide(FieldsInj, fields)
 provide(IsFormInj, isForm)
 
-/** wait until table list loads since meta load requires table list **/
-until(tables)
-  .toMatch((tables) => tables.length > 0)
-  .then(async () => {
-    await getMeta(route.params.title as string, true)
-
-    console.log('meta')
-    loading.value = false
-  })
-
 watch(isLocked, (nextValue) => (isProjectLocked.value = nextValue), { immediate: true })
 </script>
 
 <template>
   <div class="w-full h-full">
-    <div v-if="loading" class="flex items-center justify-center h-full w-full">
-      <a-spin size="large" />
-    </div>
-
-    <div v-else class="nc-container flex h-full">
+    <div class="nc-container flex h-full">
       <div class="flex flex-col h-full flex-1 min-w-0">
         <LazySmartsheetToolbar />
 

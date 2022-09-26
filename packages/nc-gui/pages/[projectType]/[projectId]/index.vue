@@ -13,6 +13,7 @@ import {
   useCopy,
   useGlobal,
   useI18n,
+  useMetas,
   useProject,
   useRoute,
   useRouter,
@@ -37,6 +38,8 @@ const { appInfo, token, signOut, signedIn, user, currentVersion } = useGlobal()
 const { project, isSharedBase, loadProjectMetaInfo, projectMetaInfo, saveTheme, reset, onLoad } = useProject(
   computed(() => route.params.projectId as string),
 )
+
+const { getMeta } = useMetas()
 
 const { clearTabs, addTab } = useTabs()
 
@@ -69,6 +72,8 @@ onLoad(async () => {
   if (!route.params.type && isUIAllowed('teamAndAuth')) {
     addTab({ type: TabType.AUTH, title: t('title.teamAndAuth') })
   }
+
+  await getMeta(route.params.title as string, true)
 
   /** If v1 url found navigate to corresponding new url */
   const { type, name, view } = route.query
