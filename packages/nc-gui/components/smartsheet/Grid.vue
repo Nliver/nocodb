@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ColumnType } from 'nocodb-sdk'
 import { UITypes, isVirtualCol } from 'nocodb-sdk'
+import type { EventHook } from '@vueuse/core'
 import {
   ActiveViewInj,
   CellUrlDisableOverlayInj,
@@ -22,7 +23,6 @@ import {
   extractPkFromRow,
   inject,
   message,
-  onBeforeMount,
   onClickOutside,
   onMounted,
   provide,
@@ -57,9 +57,11 @@ const reloadViewDataHook = inject(ReloadViewDataHookInj, createEventHook())
 const openNewRecordFormHook = inject(OpenNewRecordFormHookInj, createEventHook())
 
 const { isUIAllowed } = useUIPermission()
-const hasEditPermission = $computed(() => isUIAllowed('xcDatatableEditable'))
+
+const hasEditPermission = $computed<boolean>(() => isUIAllowed('xcDatatableEditable'))
 
 const route = useRoute()
+
 const router = useRouter()
 
 // todo: get from parent ( inject or use prop )
@@ -126,7 +128,7 @@ const disableUrlOverlay = ref(false)
 provide(CellUrlDisableOverlayInj, disableUrlOverlay)
 
 // reload table data reload hook as fallback to rowdatareload
-provide(ReloadRowDataHookInj, reloadViewDataHook)
+provide(ReloadRowDataHookInj, reloadViewDataHook as EventHook)
 
 const showLoading = ref(true)
 
@@ -541,7 +543,7 @@ reloadViewDataHook.trigger()
                     :key="columnObj.id"
                     class="cell relative cursor-pointer nc-grid-cell"
                     :class="{
-                      active: isUIAllowed('xcDatatableEditable') && selected.col === colIndex && selected.row === rowIndex,
+                      active: hasEditPermission && selected.col === colIndex && selected.row === rowIndex,
                     }"
                     :data-key="rowIndex + columnObj.id"
                     :data-col="columnObj.id"
@@ -564,12 +566,7 @@ reloadViewDataHook.trigger()
                         v-else
                         v-model="row.row[columnObj.title]"
                         :column="columnObj"
-                        :edit-enabled="
-                          isUIAllowed('xcDatatableEditable') &&
-                          editEnabled &&
-                          selected.col === colIndex &&
-                          selected.row === rowIndex
-                        "
+                        :edit-enabled="hasEditPermission && editEnabled && selected.col === colIndex && selected.row === rowIndex"
                         :row-index="rowIndex"
                         :active="selected.col === colIndex && selected.row === rowIndex"
                         @update:edit-enabled="editEnabled = false"
@@ -583,7 +580,7 @@ reloadViewDataHook.trigger()
               </template>
             </LazySmartsheetRow>
 
-            <tr v-if="!isView && !isLocked && isUIAllowed('xcDatatableEditable') && !isSqlView">
+            <tr v-if="!isView && !isLocked && hasEditPermission && !isSqlView">
               <td
                 v-e="['c:row:add:grid-bottom']"
                 :colspan="visibleColLength + 1"
@@ -602,7 +599,7 @@ reloadViewDataHook.trigger()
           </tbody>
         </table>
 
-        <template v-if="!isLocked && isUIAllowed('xcDatatableEditable')" #overlay>
+        <template v-if="!isLocked && hasEditPermission" #overlay>
           <a-menu class="shadow !rounded !py-0" @click="contextMenu = false">
             <a-menu-item v-if="contextMenuTarget" @click="deleteRow(contextMenuTarget.row)">
               <div v-e="['a:row:delete']" class="nc-project-menu-item">
