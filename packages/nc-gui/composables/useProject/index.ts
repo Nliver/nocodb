@@ -16,9 +16,9 @@ const [setup, use] = useInjectionState((projectId: MaybeRef<string>) => {
   }
 }, 'useProject')
 
-export const provideProject2 = setup
+export const provideProject = setup
 
-export function useProject2(projectId?: MaybeRef<string>) {
+export function useProject(projectId?: MaybeRef<string>) {
   const state = use()
 
   if (!state) {

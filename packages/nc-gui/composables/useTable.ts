@@ -10,7 +10,7 @@ import {
   useI18n,
   useMetas,
   useNuxtApp,
-  useProject2,
+  useProject,
   useTabs,
   watch,
 } from '#imports'
@@ -31,7 +31,7 @@ export function useTable(onTableCreate?: (tableMeta: TableType) => void) {
 
   const { closeTab } = useTabs()
 
-  const { sqlUi, project, tables, loadTables } = useProject2()
+  const { sqlUi, project, tables, loadTables } = useProject()
 
   const createTable = async () => {
     if (!sqlUi?.value) return

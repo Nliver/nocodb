@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColumnType, TableType } from 'nocodb-sdk'
+import type { ColumnType } from 'nocodb-sdk'
 import {
   ActiveViewInj,
   FieldsInj,
@@ -9,9 +9,7 @@ import {
   OpenNewRecordFormHookInj,
   ReloadViewDataHookInj,
   ReloadViewMetaHookInj,
-  computed,
   createEventHook,
-  inject,
   provide,
   ref,
   until,
@@ -20,15 +18,12 @@ import {
   useProvideSmartsheetStore,
   useRoute,
   useSidebar,
-  useTabs,
   watch,
 } from '#imports'
 
-const { getMeta, metas } = useMetas()
+const { getMeta, meta } = useMetas()
 
-const { tables } = useProject()
-
-const { activeTab } = useTabs()
+const { tables, isLocked: isProjectLocked } = useProject()
 
 const route = useRoute()
 
@@ -37,10 +32,6 @@ const loading = ref(true)
 const activeView = ref()
 
 const fields = ref<ColumnType[]>([])
-
-const treeViewIsLockedInj = inject('TreeViewIsLockedInj', ref(false))
-
-const meta = computed<TableType | undefined>(() => metas.value[activeTab.value.id!])
 
 const reloadEventHook = createEventHook()
 
@@ -69,10 +60,11 @@ until(tables)
   .then(async () => {
     await getMeta(route.params.title as string, true)
 
+    console.log('meta')
     loading.value = false
   })
 
-watch(isLocked, (nextValue) => (treeViewIsLockedInj.value = nextValue), { immediate: true })
+watch(isLocked, (nextValue) => (isProjectLocked.value = nextValue), { immediate: true })
 </script>
 
 <template>

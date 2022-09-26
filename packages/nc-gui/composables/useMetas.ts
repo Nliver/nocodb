@@ -1,12 +1,14 @@
 import { message } from 'ant-design-vue'
 import type { WatchStopHandle } from 'vue'
 import type { TableInfoType, TableType } from 'nocodb-sdk'
-import { computed, extractSdkResponseErrorMsg, onMounted, ref, useNuxtApp, useProject, useRouter, watch } from '#imports'
+import { computed, extractSdkResponseErrorMsg, ref, useInjectionState, useNuxtApp, useProject, useTabs, watch } from '#imports'
 
-export function useMetas() {
+const [setup, use] = useInjectionState(() => {
   const { $api } = useNuxtApp()
 
   const { tables } = useProject()
+
+  const { activeTab } = useTabs()
 
   const metas = ref<{ [idOrTitle: string]: TableType | any }>({})
 
@@ -17,6 +19,8 @@ export function useMetas() {
   })
 
   const loadingState = ref<Record<string, boolean>>({})
+
+  const meta = computed<TableType | undefined>(() => activeTab.value && metas.value[activeTab.value.id!])
 
   const setMeta = async (model: any) => {
     metas.value = {
@@ -43,7 +47,7 @@ export function useMetas() {
 
         // watch for loading state change
         unwatch = watch(
-          () => !!loadingState.value[tableIdOrTitle],
+          () => loadingState.value[tableIdOrTitle],
           (isLoading) => {
             if (!isLoading) {
               clearTimeout(timeout)
@@ -103,11 +107,15 @@ export function useMetas() {
     }
   }
 
-  onMounted(() => {
-    useRouter().beforeEach(async (to, from) => {
-      if (from.params.title !== to.params.title) await getMeta(to.params.title as string)
-    })
-  })
+  return { getMeta, clearAllMeta, metas, meta, metasWithIdAsKey, removeMeta, setMeta }
+})
 
-  return { getMeta, clearAllMeta, metas, metasWithIdAsKey, removeMeta, setMeta }
+export function useMetas() {
+  const state = use()
+
+  if (!state) {
+    return setup()
+  }
+
+  return state
 }

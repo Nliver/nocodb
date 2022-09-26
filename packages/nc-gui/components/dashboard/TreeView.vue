@@ -10,7 +10,7 @@ import {
   resolveComponent,
   useDialog,
   useNuxtApp,
-  useProject2,
+  useProject,
   useTable,
   useTabs,
   useUIPermission,
@@ -20,17 +20,11 @@ import { TabType } from '~/lib'
 import MdiView from '~icons/mdi/eye-circle-outline'
 import MdiTableLarge from '~icons/mdi/table-large'
 
-interface Props {
-  isLocked: boolean
-}
-
-const { isLocked } = defineProps<Props>()
-
 const { addTab } = useTabs()
 
 const { $api, $e } = useNuxtApp()
 
-const { tables, loadTables, isSharedBase } = useProject2()
+const { tables, loadTables, isSharedBase, isLocked } = useProject()
 
 const { activeTab } = useTabs()
 

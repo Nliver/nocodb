@@ -21,5 +21,7 @@ export const useProjectState = (id: MaybeRef<any>) => {
 
   const projectMetaInfo = ref<ProjectMetaInfo | undefined>()
 
-  return { projectId, project, tables, projectMetaInfo }
+  const isLocked = ref(false)
+
+  return { projectId, project, tables, projectMetaInfo, isLocked }
 }
