@@ -5,13 +5,12 @@ import GithubButton from 'vue-github-button'
 import {
   Empty,
   computed,
-  inject,
   reactive,
   ref,
   resolveComponent,
   useDialog,
   useNuxtApp,
-  useProject,
+  useProject2,
   useTable,
   useTabs,
   useUIPermission,
@@ -21,19 +20,23 @@ import { TabType } from '~/lib'
 import MdiView from '~icons/mdi/eye-circle-outline'
 import MdiTableLarge from '~icons/mdi/table-large'
 
+interface Props {
+  isLocked: boolean
+}
+
+const { isLocked } = defineProps<Props>()
+
 const { addTab } = useTabs()
 
 const { $api, $e } = useNuxtApp()
 
-const { tables, loadTables, isSharedBase } = useProject()
+const { tables, loadTables, isSharedBase } = useProject2()
 
 const { activeTab } = useTabs()
 
 const { deleteTable } = useTable()
 
 const { isUIAllowed } = useUIPermission()
-
-const isLocked = inject('TreeViewIsLockedInj')
 
 let key = $ref(0)
 
@@ -126,8 +129,6 @@ const contextMenuTarget = reactive<{ type?: 'table' | 'main'; value?: any }>({})
 const setMenuContext = (type: 'table' | 'main', value?: any) => {
   contextMenuTarget.type = type
   contextMenuTarget.value = value
-
-  // $e('c:table:create:navdraw:right-click')
 }
 
 const reloadTables = async () => {

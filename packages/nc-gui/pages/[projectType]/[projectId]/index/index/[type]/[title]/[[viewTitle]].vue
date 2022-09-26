@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type { ViewType } from 'nocodb-sdk'
-
 interface Props {
-  activeView?: ViewType
   isGallery?: boolean
   isGrid?: boolean
   isForm?: boolean

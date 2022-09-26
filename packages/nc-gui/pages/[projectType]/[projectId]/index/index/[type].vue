@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ColumnType, TableType } from 'nocodb-sdk'
-import type { TabItem } from '~/lib'
 import {
   ActiveViewInj,
   FieldsInj,
@@ -10,11 +9,9 @@ import {
   OpenNewRecordFormHookInj,
   ReloadViewDataHookInj,
   ReloadViewMetaHookInj,
-  TabMetaInj,
   computed,
   createEventHook,
   inject,
-  onUpdated,
   provide,
   ref,
   until,
@@ -22,14 +19,16 @@ import {
   useProject,
   useProvideSmartsheetStore,
   useRoute,
-  useRouter,
   useSidebar,
+  useTabs,
   watch,
 } from '#imports'
 
 const { getMeta, metas } = useMetas()
 
 const { tables } = useProject()
+
+const { activeTab } = useTabs()
 
 const route = useRoute()
 
@@ -38,11 +37,6 @@ const loading = ref(true)
 const activeView = ref()
 
 const fields = ref<ColumnType[]>([])
-
-const activeTab = inject(
-  TabMetaInj,
-  computed(() => ({} as TabItem)),
-)
 
 const treeViewIsLockedInj = inject('TreeViewIsLockedInj', ref(false))
 
@@ -78,15 +72,7 @@ until(tables)
     loading.value = false
   })
 
-onMounted(() => {
-  useRouter().beforeEach(async (to) => {
-    if (to.params.title) await getMeta(to.params.title as string, true)
-  })
-})
-
 watch(isLocked, (nextValue) => (treeViewIsLockedInj.value = nextValue), { immediate: true })
-
-console.log('type')
 </script>
 
 <template>
@@ -99,7 +85,7 @@ console.log('type')
       <div class="flex flex-col h-full flex-1 min-w-0">
         <LazySmartsheetToolbar />
 
-        <NuxtPage :active-view="activeView" :is-gallery="isGallery" :is-form="isForm" :is-grid="isGrid" />
+        <NuxtPage :is-gallery="isGallery" :is-form="isForm" :is-grid="isGrid" />
       </div>
 
       <LazySmartsheetSidebar v-model:active-view="activeView" :meta="meta" class="nc-right-sidebar" />

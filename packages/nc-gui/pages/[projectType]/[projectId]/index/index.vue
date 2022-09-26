@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import type { TabItem } from '~/lib'
 import { TabType } from '~/lib'
-import { TabMetaInj, iconMap, provide, useGlobal, useSidebar, useTabs } from '#imports'
+import { iconMap, useGlobal, useSidebar, useTabs } from '#imports'
 
-const { tabs, activeTabIndex, activeTab, closeTab } = useTabs()
+const { tabs, activeTabIndex, closeTab } = useTabs()
 
 const { isLoading } = useGlobal()
 
-provide(TabMetaInj, activeTab)
-
-const icon = (tab: TabItem) => {
-  switch (tab.type) {
+const icon = (type: TabType) => {
+  switch (type) {
     case TabType.TABLE:
       return iconMap['mdi-table-large']
     case TabType.VIEW:
@@ -48,7 +45,7 @@ function onEdit(targetKey: number, action: 'add' | 'remove' | string) {
             <template #tab>
               <div class="flex items-center gap-2 max-w-[110px]">
                 <div class="flex items-center">
-                  <component :is="icon(tab)" class="text-sm" />
+                  <component :is="icon(tab.type)" class="text-sm" />
                 </div>
 
                 <a-tooltip v-if="tab.title?.length > 12" placement="bottom">
