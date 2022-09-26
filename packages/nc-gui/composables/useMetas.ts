@@ -1,26 +1,27 @@
 import { message } from 'ant-design-vue'
 import type { WatchStopHandle } from 'vue'
 import type { TableInfoType, TableType } from 'nocodb-sdk'
-import { extractSdkResponseErrorMsg, useNuxtApp, useProject, useState, watch } from '#imports'
+import { computed, extractSdkResponseErrorMsg, onMounted, ref, useNuxtApp, useProject, useRouter, watch } from '#imports'
 
 export function useMetas() {
   const { $api } = useNuxtApp()
 
   const { tables } = useProject()
 
-  const metas = useState<{ [idOrTitle: string]: TableType | any }>('metas', () => ({}))
+  const metas = ref<{ [idOrTitle: string]: TableType | any }>({})
 
   const metasWithIdAsKey = computed<Record<string, TableType>>(() => {
     const idEntries = Object.entries(metas.value).filter(([k, v]) => k === v.id)
+
     return Object.fromEntries(idEntries)
   })
 
-  const loadingState = useState<Record<string, boolean>>('metas-loading-state', () => ({}))
+  const loadingState = ref<Record<string, boolean>>({})
 
   const setMeta = async (model: any) => {
     metas.value = {
       ...metas.value,
-      [model.id!]: model,
+      [model.id]: model,
       [model.title]: model,
     }
   }
@@ -101,6 +102,12 @@ export function useMetas() {
       delete metas.value[meta.title]
     }
   }
+
+  onMounted(() => {
+    useRouter().beforeEach(async (to, from) => {
+      if (from.params.title !== to.params.title) await getMeta(to.params.title as string)
+    })
+  })
 
   return { getMeta, clearAllMeta, metas, metasWithIdAsKey, removeMeta, setMeta }
 }
